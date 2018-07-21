@@ -1,6 +1,7 @@
 package io.github.ydq.jquery;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import sun.net.www.protocol.https.Handler;
 
@@ -12,7 +13,6 @@ import java.net.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.function.Consumer;
@@ -34,11 +34,14 @@ public class JQuery {
         String meta;
     }
 
-    @Data
-    @NoArgsConstructor
+    @Accessors(fluent = true)
     public static class JQueryResponse {
+        @Getter
         Boolean                   status;
+        @Getter
         String                    content;
+        @Getter
+        @Setter
         Map<String, List<String>> headers;
 
         public JQueryResponse(Boolean status, String content) {
@@ -186,13 +189,13 @@ public class JQuery {
                 result = URLConnectionRequest(httpsConn, data);
                 httpsConn.getHeaderFields();
                 redirect = httpsConn.getHeaderField("Location");
-                result.setHeaders(httpsConn.getHeaderFields());
+                result.headers(httpsConn.getHeaderFields());
                 httpsConn.disconnect();
             } else {
                 var httpConn = (HttpURLConnection) conn;
                 httpConn.setRequestMethod(METHOD.get().toString());
                 result = URLConnectionRequest(httpConn, data);
-                result.setHeaders(httpConn.getHeaderFields());
+                result.headers(httpConn.getHeaderFields());
                 redirect = httpConn.getHeaderField("Location");
                 httpConn.disconnect();
             }
